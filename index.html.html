@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>الغرفة VIP</title>
+<style>
+  :root{
+    --bg-deep:#05060f;
+    --bg-mid:#0b0e21;
+    --cyan:#38f2e0;
+    --violet:#8b5cf6;
+    --amber:#ffb84d;
+    --ice:#eef2ff;
+    --line:rgba(255,255,255,.08);
+  }
+  *{ box-sizing:border-box; }
+
+  ::-webkit-scrollbar{ width:8px; }
+  ::-webkit-scrollbar-track{ background:var(--bg-mid); }
+  ::-webkit-scrollbar-thumb{ background:linear-gradient(180deg,var(--cyan),var(--violet)); border-radius:10px; }
+
+  body{
+    margin:0; min-height:100vh; padding:44px 16px;
+    display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(139,92,246,.22), transparent 40%),
+      radial-gradient(circle at 85% 15%, rgba(56,242,224,.16), transparent 45%),
+      radial-gradient(circle at 50% 100%, rgba(255,184,77,.10), transparent 50%),
+      linear-gradient(180deg, var(--bg-deep), var(--bg-mid));
+    font-family:'Segoe UI', Tahoma, Arial, sans-serif;
+    color:var(--ice);
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  #particles{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+  #spotlight{ position:fixed; inset:0; pointer-events:none; z-index:1; }
+
+  .wrap{ position:relative; z-index:2; width:100%; max-width:600px; }
+
+  /* ---------- header ---------- */
+  .grid-glow{
+    position:absolute; inset:-40px -20px auto -20px; height:220px;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:28px 28px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 100% at 50% 0%, #000 40%, transparent 80%);
+            mask-image: radial-gradient(ellipse 70% 100% at 50% 0%, #000 40%, transparent 80%);
+    opacity:.6; pointer-events:none;
+  }
+  .stage{ text-align:center; position:relative; margin-bottom:26px; }
+  .eyebrow{
+    position:relative; display:inline-flex; align-items:center; gap:8px;
+    font-size:12.5px; letter-spacing:2px; color:var(--cyan);
+    border:1px solid rgba(56,242,224,.35); padding:6px 16px; border-radius:999px;
+    background:rgba(56,242,224,.06); margin-bottom:16px;
+  }
+  .eyebrow .dot{ width:6px; height:6px; border-radius:50%; background:var(--cyan);
+    box-shadow:0 0 8px var(--cyan); animation: blink 1.6s ease-in-out infinite; }
+  @keyframes blink{ 50%{ opacity:.25; } }
+
+  h1#glitchTitle{ font-size:clamp(26px,6vw,38px); font-weight:800; color:var(--cyan);
+    letter-spacing:.5px; margin:0 0 6px; }
+
+  #greeting{ font-size:14.5px; color:#dfe3f7; margin-bottom:4px; }
+  .subtitle{ color:#a9b0d6; font-size:14px; max-width:440px; margin:6px auto 0; line-height:1.7; }
+
+  /* ---------- ticker ---------- */
+  .ticker-wrap{
+    position:relative; overflow:hidden; background:rgba(139,92,246,.08);
+    border:1px solid rgba(56,242,224,.3); border-radius:10px; padding:8px 0; margin-bottom:18px;
+  }
+  .ticker-track{ display:inline-block; white-space:nowrap; padding-inline-end:100%;
+    animation:ticker 18s linear infinite; color:var(--cyan); font-size:13px; font-weight:600; }
+  @keyframes ticker{ from{ transform:translateX(100%);} to{ transform:translateX(-100%);} }
+
+  /* ---------- stats ---------- */
+  .stats{ display:flex; gap:16px; justify-content:center; margin:18px 0 24px; }
+  .stat-box{ text-align:center; }
+  .stat{ font-size:26px; font-weight:800; }
+  .stat-label{ font-size:11.5px; color:#9aa0c9; }
+
+  /* ---------- countdown ---------- */
+  .countdown-box{ text-align:center; background:rgba(255,255,255,.04);
+    border:1px solid rgba(56,242,224,.25); border-radius:16px; padding:16px; margin-bottom:22px; }
+  .countdown-box .lbl{ font-size:12px; color:#9aa0c9; margin-bottom:8px; }
+  #countdown{ font-size:22px; font-weight:800; color:var(--cyan); letter-spacing:1px; }
+
+  /* ---------- generic card ---------- */
+  .card{
+    position:relative; text-align:right;
+    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    backdrop-filter: blur(14px); border:1px solid rgba(255,255,255,.12);
+    border-radius:22px; padding:24px 20px; margin-bottom:22px;
+    box-shadow:0 30px 60px rgba(0,0,0,.45);
+  }
+  .card h2{ margin:0 0 16px; font-size:19px; color:var(--ice); display:flex; align-items:center; gap:8px; text-align:right;}
+  .card h2 .ic{ color:var(--cyan); filter:drop-shadow(0 0 6px rgba(56,242,224,.6)); }
+
+  /* ---------- rules button ---------- */
+  .btn-center{ text-align:center; margin-bottom:22px; }
+  .btn-wrap{ position:relative; display:inline-block; }
+  .rules-btn{
+    position:relative; z-index:2; cursor:pointer; border:none; font-family:inherit;
+    font-size:17px; font-weight:700; color:var(--bg-deep); padding:16px 36px; border-radius:16px;
+    background:linear-gradient(100deg, var(--cyan), var(--violet) 60%, var(--amber));
+    background-size:220% 100%;
+    box-shadow:0 0 0 1px rgba(255,255,255,.15) inset, 0 14px 40px rgba(139,92,246,.35);
+    animation: flowbg 6s linear infinite; transition: transform .25s ease, box-shadow .25s ease;
+  }
+  @keyframes flowbg{ 0%{ background-position:0% 50%;} 100%{ background-position:220% 50%;} }
+  .rules-btn:hover{ transform: translateY(-3px); }
+  .btn-wrap::before{
+    content:""; position:absolute; inset:-10px; border-radius:22px; padding:1px;
+    background:conic-gradient(from 0deg, var(--cyan), var(--violet), var(--amber), var(--cyan));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    animation: spin 4s linear infinite; opacity:.55;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  .arrow{ display:inline-block; margin-inline-start:8px; transition: transform .35s ease; }
+  .rules-btn.open .arrow{ transform: rotate(180deg); }
+
+  .panel{ max-height:0; opacity:0; overflow:hidden;
+    transition: max-height .6s cubic-bezier(.4,0,.2,1), opacity .5s ease, margin .5s ease; }
+  .panel.show{ max-height:1500px; opacity:1; margin-top:0; }
+
+  ul.rules{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px; }
+  ul.rules li{
+    position:relative; display:flex; align-items:flex-start; gap:12px;
+    background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:14px;
+    padding:14px 16px; font-size:14.5px; line-height:1.7; color:#dfe3f7;
+    opacity:0; transform: translateX(18px); animation: slideIn .5s ease forwards;
+  }
+  ul.rules li:nth-child(1){ animation-delay:.05s; } ul.rules li:nth-child(2){ animation-delay:.13s; }
+  ul.rules li:nth-child(3){ animation-delay:.21s; } ul.rules li:nth-child(4){ animation-delay:.29s; }
+  ul.rules li:nth-child(5){ animation-delay:.37s; } ul.rules li:nth-child(6){ animation-delay:.45s; }
+  ul.rules li:nth-child(7){ animation-delay:.53s; } ul.rules li:nth-child(8){ animation-delay:.61s; }
+  @keyframes slideIn{ to{ opacity:1; transform:translateX(0); } }
+  ul.rules .num{ flex:0 0 auto; width:26px; height:26px; border-radius:8px;
+    background:linear-gradient(135deg,var(--cyan),var(--violet)); color:var(--bg-deep);
+    font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  .footer-note{ margin-top:18px; font-size:12px; color:#7c84ad; }
+
+  /* ---------- music player ---------- */
+  .dropzone{
+    border:2px dashed rgba(56,242,224,.35); border-radius:16px; padding:20px 14px; text-align:center;
+    cursor:pointer; font-size:13px; color:#9aa0c9; margin-bottom:16px;
+    transition: border-color .25s ease, background .25s ease;
+  }
+  .dropzone:hover, .dropzone.drag{ border-color:var(--cyan); background:rgba(56,242,224,.06); }
+  .dropzone input{ display:none; }
+
+  .now-playing{ display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:12px 14px; margin-bottom:14px; }
+  #eq{ display:flex; align-items:flex-end; gap:3px; height:34px; }
+  #eq .bar{ width:4px; background:linear-gradient(180deg,var(--cyan),var(--violet)); border-radius:3px; height:4px; transition:height .1s ease; }
+  .track-info{ flex:1; min-width:0; }
+  .track-name{ font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .track-sub{ font-size:11.5px; color:#7c84ad; }
+
+  .controls{ display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:16px; }
+  .ctrl-btn{ border:none; cursor:pointer; color:var(--bg-deep);
+    background:linear-gradient(135deg,var(--cyan),var(--violet)); width:38px; height:38px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:14px; transition: transform .2s ease; }
+  .ctrl-btn.big{ width:52px; height:52px; font-size:18px; }
+  .ctrl-btn:hover{ transform:scale(1.08); }
+
+  progress{ width:100%; height:6px; border-radius:6px; margin-bottom:16px; accent-color: var(--cyan); }
+
+  .playlist{ list-style:none; margin:0; padding:0; max-height:190px; overflow-y:auto;
+    display:flex; flex-direction:column; gap:6px; margin-bottom:18px; }
+  .playlist li{ display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.06); border-radius:10px; padding:9px 10px; font-size:13px; cursor:pointer; }
+  .playlist li:hover{ background:rgba(255,255,255,.06); }
+  .playlist li.active{ border-color:var(--cyan); background:rgba(56,242,224,.08); }
+  .playlist li .name{ flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  .entry-section p{ font-size:11.5px; color:#7c84ad; margin:0 0 10px; line-height:1.6; }
+  .entry-section input[type=text]{ width:100%; padding:10px 12px; border-radius:10px;
+    border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.03); color:var(--ice);
+    font-size:12.5px; margin-bottom:8px; }
+  .entry-section button{ width:100%; padding:10px; border:none; border-radius:10px;
+    background:linear-gradient(135deg,var(--cyan),var(--violet)); color:var(--bg-deep); font-weight:700;
+    font-size:13px; cursor:pointer; }
+
+  .divider{ height:1px; background:var(--line); margin:18px 0; }
+
+  /* ---------- vip lock ---------- */
+  .vip-locked{ text-align:center; padding:18px; border:1px dashed rgba(255,184,77,.4);
+    border-radius:14px; background:rgba(255,184,77,.05); }
+  .vip-locked .lbl{ font-size:13px; color:var(--amber); margin-bottom:10px; }
+  .vip-locked input{ padding:8px 12px; border-radius:8px; border:1px solid rgba(255,255,255,.15);
+    background:rgba(255,255,255,.03); color:var(--ice); font-size:12.5px; margin-inline-end:6px; }
+  .vip-locked button{ padding:8px 16px; border:none; border-radius:8px;
+    background:linear-gradient(135deg,var(--amber),var(--violet)); color:var(--bg-deep); font-weight:700; cursor:pointer; }
+  #vipContent{ display:none; text-align:center; padding:16px; font-size:14px; }
+
+  /* ---------- badges ---------- */
+  .badges{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:22px; }
+  .badge{ display:inline-flex; align-items:center; gap:4px; padding:4px 12px; border-radius:20px; font-size:11.5px; font-weight:800; }
+  .badge.owner{ background:linear-gradient(135deg,var(--amber),#ff6b6b); color:var(--bg-deep); }
+  .badge.vip{ background:linear-gradient(135deg,var(--cyan),var(--violet)); color:var(--bg-deep); }
+  .badge.member{ background:rgba(255,255,255,.1); color:#dfe3f7; border:1px solid rgba(255,255,255,.2); }
+
+  /* ---------- copy link ---------- */
+  #copyBtn{ display:block; margin:6px auto 0; padding:10px 24px; border:1px solid rgba(56,242,224,.35);
+    border-radius:30px; background:rgba(56,242,224,.06); color:var(--cyan); font-size:13px; font-weight:700;
+    cursor:pointer; transition:all .3s ease; }
+
+  /* ---------- popups / overlays ---------- */
+  #entryBanner{ position:fixed; top:20px; left:50%; transform:translate(-50%,-80px);
+    background:linear-gradient(135deg,var(--cyan),var(--violet)); color:var(--bg-deep); font-weight:800;
+    padding:10px 22px; border-radius:30px; font-size:13.5px; z-index:9997;
+    box-shadow:0 10px 30px rgba(139,92,246,.5); transition:transform .6s cubic-bezier(.34,1.56,.64,1); }
+
+  #welcomePop{ position:fixed; bottom:20px; left:20px; max-width:280px;
+    background:rgba(11,14,33,.95); border:1px solid rgba(56,242,224,.3); border-radius:14px;
+    padding:14px 16px; color:var(--ice); font-size:13px; box-shadow:0 10px 30px rgba(0,0,0,.5);
+    z-index:9998; opacity:0; animation:popIn .5s ease forwards .4s; }
+  @keyframes popIn{ from{ opacity:0; transform:translateY(20px);} to{ opacity:1; transform:translateY(0);} }
+
+  #unlock{ position:fixed; inset:0; background:rgba(5,6,15,.9); display:none;
+    align-items:center; justify-content:center; z-index:9999; cursor:pointer; text-align:center; padding:20px; }
+  #unlock div{ border:1px solid rgba(56,242,224,.4); border-radius:18px; padding:26px 30px;
+    background:rgba(11,14,33,.9); font-size:15px; }
+
+  #customMenu{ position:fixed; display:none; z-index:9999; background:rgba(11,14,33,.97);
+    border:1px solid rgba(56,242,224,.3); border-radius:10px; padding:6px; font-size:13px;
+    box-shadow:0 10px 30px rgba(0,0,0,.5); }
+  .menu-item{ padding:8px 16px; border-radius:6px; cursor:pointer; color:#dfe3f7; }
+  .menu-item:hover{ background:rgba(56,242,224,.12); color:var(--cyan); }
+
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<div id="spotlight"></div>
+
+<div class="wrap">
+  <div class="stage">
+    <div class="grid-glow"></div>
+    <div class="eyebrow"><span class="dot"></span> غرفة دردشة حصرية</div>
+    <h1 id="glitchTitle"></h1>
+    <div id="greeting"></div>
+    <div class="subtitle">قبل المشاركة في الدردشة، يُرجى الاطلاع على القوانين والاستمتاع بتجربة الغرفة.</div>
+  </div>
+
+  <div class="ticker-wrap">
+    <div class="ticker-track">
+      🔥 مرحباً بالأعضاء الجدد &nbsp;&nbsp;•&nbsp;&nbsp; 🎉 حدث خاص هذا الأسبوع &nbsp;&nbsp;•&nbsp;&nbsp; 💎 انضم إلى قائمة الأعضاء المميزين
+    </div>
+  </div>
+
+  <div class="badges">
+    <span class="badge owner">👑 المالك</span>
+    <span class="badge vip">💎 VIP</span>
+    <span class="badge member">⭐ عضو</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat-box"><div class="stat" data-target="240" style="color:var(--cyan)">0</div><div class="stat-label">عضو</div></div>
+    <div class="stat-box"><div class="stat" data-target="12" style="color:var(--violet)">0</div><div class="stat-label">مشرف</div></div>
+    <div class="stat-box"><div class="stat" data-target="365" style="color:var(--amber)">0</div><div class="stat-label">يوم نشاط</div></div>
+  </div>
+
+  <div class="countdown-box">
+    <div class="lbl">⏳ الحدث القادم يبدأ خلال</div>
+    <div id="countdown"></div>
+  </div>
+
+  <!-- RULES -->
+  <div class="btn-center">
+    <div class="btn-wrap">
+      <button class="rules-btn" id="toggleBtn" onclick="toggleRules()">
+        اضغط هنا لعرض القوانين
+        <span class="arrow">⌄</span>
+      </button>
+    </div>
+  </div>
+  <div class="panel" id="panel">
+    <div class="card">
+      <h2><span class="ic">◆</span> قوانين الدردشة</h2>
+      <ul class="rules">
+        <li><span class="num">1</span> يجب احترام جميع الأعضاء، ويُمنع استخدام ألفاظ مسيئة أو مهينة.</li>
+        <li><span class="num">2</span> يُمنع الإسبام أو تكرار نفس الرسالة بشكل متكرر.</li>
+        <li><span class="num">3</span> يُمنع نشر الروابط أو الإعلانات دون إذن من الإدارة.</li>
+        <li><span class="num">4</span> يُفضّل استخدام لغة مفهومة للجميع، سواء العربية الفصحى أو الإنجليزية.</li>
+        <li><span class="num">5</span> يُمنع الخوض في مواضيع العنصرية أو السياسة أو الدين الحساسة.</li>
+        <li><span class="num">6</span> يجب احترام قرارات الإدارة والمشرفين، وأي خلاف يُناقش بهدوء خارج الدردشة العامة.</li>
+        <li><span class="num">7</span> يُمنع مشاركة المعلومات الشخصية لأي عضو دون موافقته.</li>
+        <li><span class="num">8</span> الهدف من هذه الدردشة هو التواصل والاستمتاع، فلنحافظ جميعاً على أجواء إيجابية ومحترمة.</li>
+      </ul>
+      <div class="footer-note">بدخولك إلى هذه الدردشة، فإنك توافق على الالتزام بهذه القوانين.</div>
+    </div>
+  </div>
+
+  <!-- MUSIC PLAYER -->
+  <div class="card">
+    <h2><span class="ic">🎵</span> مشغل الأغاني</h2>
+
+    <label class="dropzone" id="dropzone">
+      📁 اسحب ملفات MP3 هنا أو اضغط للاختيار من جهازك
+      <input type="file" id="fileInput" accept="audio/*" multiple>
+    </label>
+
+    <div class="now-playing">
+      <div id="eq"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+      <div class="track-info">
+        <div class="track-name" id="trackName">لم يتم اختيار أغنية</div>
+        <div class="track-sub" id="trackSub">ارفع أغنية للبدء</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="ctrl-btn" id="prevBtn">⏮</button>
+      <button class="ctrl-btn big" id="playBtn">▶</button>
+      <button class="ctrl-btn" id="nextBtn">⏭</button>
+    </div>
+
+    <progress id="progressBar" value="0" max="100"></progress>
+
+    <ul class="playlist" id="playlist"></ul>
+
+    <div class="divider"></div>
+
+    <div class="entry-section">
+      <p>ملاحظة: الملفات المرفوعة من جهازك تعمل فقط في متصفحك أنت. لتشغيل أغنية تلقائياً لكل من يدخل الغرفة، ضع رابط MP3 مباشر (مستضاف على الإنترنت) بالأسفل.</p>
+      <input type="text" id="entryUrl" placeholder="https://example.com/song.mp3">
+      <button id="entrySave">تفعيل هذه الأغنية للجميع عند الدخول</button>
+    </div>
+  </div>
+
+  <!-- VIP LOCK -->
+  <div class="card">
+    <h2><span class="ic">🔒</span> محتوى VIP حصري</h2>
+    <div class="vip-locked" id="vipLocked">
+      <div class="lbl">أدخل الكود لفتح المحتوى الحصري</div>
+      <input id="vipCode" type="text" placeholder="أدخل الكود">
+      <button onclick="checkVip()">فتح</button>
+    </div>
+    <div id="vipContent">🎁 محتوى سري هنا (رابط ديسكورد، مكافأة، لعبة إضافية...)</div>
+  </div>
+
+  <button id="copyBtn" onclick="copyLink(event)">🔗 نسخ رابط الدعوة</button>
+  <div style="text-align:center;font-size:12px;color:#9aa0c9;margin-top:10px;">
+    👥 عدد الزيارات: <span id="visitCount" style="color:var(--cyan);font-weight:800;"></span>
+  </div>
+</div>
+
+<!-- overlays -->
+<div id="entryBanner">✨ عضو جديد دخل الغرفة VIP</div>
+<div id="welcomePop">
+  👋 أهلاً بك! لا تنسَ الاطلاع على القوانين قبل المشاركة.
+  <div onclick="this.parentElement.remove()" style="position:absolute;top:6px;left:10px;cursor:pointer;color:#7c84ad;">✕</div>
+</div>
+<div id="unlock"><div>🔊 اضغط لتفعيل الصوت والاستماع لأغنية الترحيب</div></div>
+<div id="customMenu">
+  <div class="menu-item" onclick="copyLink(event)">✨ مشاركة الغرفة</div>
+  <div class="menu-item" onclick="document.getElementById('toggleBtn').scrollIntoView({behavior:'smooth'})">💎 عرض القوانين</div>
+  <div class="menu-item" onclick="document.getElementById('dropzone').scrollIntoView({behavior:'smooth'})">🎵 تشغيل الموسيقى</div>
+</div>
+
+<script>
+/* ================= particles ================= */
+const c = document.getElementById('particles');
+const ctx = c.getContext('2d');
+function resize(){ c.width = innerWidth; c.height = innerHeight; }
+resize(); addEventListener('resize', resize);
+const dots = Array.from({length:50}, () => ({
+  x: Math.random()*c.width, y: Math.random()*c.height,
+  r: Math.random()*2+0.5, dx:(Math.random()-.5)*0.3, dy:(Math.random()-.5)*0.3,
+  hue: Math.random() > 0.5 ? '56,242,224' : '139,92,246'
+}));
+function particleLoop(){
+  ctx.clearRect(0,0,c.width,c.height);
+  dots.forEach(d=>{
+    d.x+=d.dx; d.y+=d.dy;
+    if(d.x<0||d.x>c.width) d.dx*=-1;
+    if(d.y<0||d.y>c.height) d.dy*=-1;
+    ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+    ctx.fillStyle = `rgba(${d.hue},0.5)`;
+    ctx.shadowBlur = 6; ctx.shadowColor = `rgba(${d.hue},0.8)`;
+    ctx.fill();
+  });
+  requestAnimationFrame(particleLoop);
+}
+particleLoop();
+
+/* ================= spotlight ================= */
+document.addEventListener('mousemove', e=>{
+  document.getElementById('spotlight').style.background =
+    `radial-gradient(circle 220px at ${e.clientX}px ${e.clientY}px, rgba(56,242,224,.08), transparent 70%)`;
+});
+
+/* ================= sparkle cursor trail ================= */
+document.addEventListener('mousemove', e=>{
+  if(Math.random() > 0.85){
+    const s = document.createElement('div');
+    s.textContent = ['✦','✧','◆'][Math.floor(Math.random()*3)];
+    s.style.cssText = `position:fixed;left:${e.clientX}px;top:${e.clientY}px;
+      pointer-events:none;font-size:13px;color:#38f2e0;z-index:9996;
+      transition:transform .8s ease, opacity .8s ease;`;
+    document.body.appendChild(s);
+    requestAnimationFrame(()=>{ s.style.transform='translateY(-25px) scale(.3)'; s.style.opacity='0'; });
+    setTimeout(()=>s.remove(),800);
+  }
+});
+
+/* ================= glitch title ================= */
+function scrambleText(el, finalText, duration=1200){
+  const chars = "!<>-_\\/[]{}—=+*^?#01ابتثجحخدذ";
+  let frame = 0;
+  const totalFrames = Math.floor(duration/30);
+  const interval = setInterval(()=>{
+    let out = "";
+    for(let i=0;i<finalText.length;i++){
+      out += i < (frame/totalFrames)*finalText.length ? finalText[i] : chars[Math.floor(Math.random()*chars.length)];
+    }
+    el.textContent = out;
+    frame++;
+    if(frame > totalFrames){ el.textContent = finalText; clearInterval(interval); }
+  }, 30);
+}
+scrambleText(document.getElementById('glitchTitle'), "غرفة VIP الحصرية");
+
+/* ================= greeting ================= */
+const hr = new Date().getHours();
+document.getElementById('greeting').textContent =
+  hr < 12 ? "☀️ صباح الخير، أهلاً بك في الغرفة" :
+  hr < 18 ? "🌤️ مساء الخير، استمتع بوقتك معنا" :
+  "🌙 مساء الخير، الأجواء الليلية بانتظارك";
+
+/* ================= stat counters ================= */
+document.querySelectorAll('.stat').forEach(el=>{
+  const target = +el.dataset.target;
+  let n = 0; const step = Math.ceil(target/60);
+  const t = setInterval(()=>{ n += step; if(n>=target){ n=target; clearInterval(t); } el.textContent = n; }, 25);
+});
+
+/* ================= countdown ================= */
+const eventDate = new Date("2026-07-20T20:00:00").getTime(); // غيّر التاريخ هنا
+setInterval(()=>{
+  const diff = eventDate - Date.now();
+  const box = document.getElementById('countdown');
+  if(diff<=0){ box.textContent = "🎉 بدأ الآن!"; return; }
+  const d = Math.floor(diff/86400000), h = Math.floor(diff%86400000/3600000),
+        m = Math.floor(diff%3600000/60000), s = Math.floor(diff%60000/1000);
+  box.textContent = `${d}ي ${h}س ${m}د ${s}ث`;
+}, 1000);
+
+/* ================= rules toggle ================= */
+function toggleRules(){
+  const panel = document.getElementById('panel');
+  const btn = document.getElementById('toggleBtn');
+  const opening = !panel.classList.contains('show');
+  panel.classList.toggle('show');
+  btn.classList.toggle('open');
+  btn.childNodes[0].textContent = opening ? "اضغط هنا لإخفاء القوانين " : "اضغط هنا لعرض القوانين ";
+  if(opening){
+    panel.querySelectorAll('ul.rules li').forEach(li=>{
+      li.style.animation = 'none'; void li.offsetWidth; li.style.animation = null;
+    });
+  }
+}
+
+/* ================= music player ================= */
+let playlist = [];
+let currentIndex = -1;
+const audio = new Audio();
+let audioCtxStarted = false;
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const playlistEl = document.getElementById('playlist');
+const trackName = document.getElementById('trackName');
+const trackSub = document.getElementById('trackSub');
+const playBtn = document.getElementById('playBtn');
+const progressBar = document.getElementById('progressBar');
+const eqBars = document.querySelectorAll('#eq .bar');
+
+['dragover','dragleave','drop'].forEach(evt=>{
+  dropzone.addEventListener(evt, e=>{ e.preventDefault(); dropzone.classList.toggle('drag', evt==='dragover'); });
+});
+dropzone.addEventListener('drop', e=> handleFiles(e.dataTransfer.files));
+fileInput.addEventListener('change', e=> handleFiles(e.target.files));
+
+function handleFiles(files){
+  [...files].forEach(f=>{
+    if(!f.type.startsWith('audio')) return;
+    playlist.push({ name: f.name.replace(/\.[^/.]+$/,''), url: URL.createObjectURL(f) });
+  });
+  renderPlaylist();
+  if(currentIndex === -1 && playlist.length){ loadTrack(0); }
+}
+
+function renderPlaylist(){
+  playlistEl.innerHTML = '';
+  playlist.forEach((t,i)=>{
+    const li = document.createElement('li');
+    li.className = i===currentIndex ? 'active' : '';
+    li.innerHTML = `<span class="name">${t.name}</span>`;
+    li.onclick = ()=> { loadTrack(i); playAudio(); };
+    playlistEl.appendChild(li);
+  });
+}
+
+function loadTrack(i){
+  currentIndex = i;
+  const t = playlist[i];
+  audio.src = t.url;
+  trackName.textContent = t.name;
+  trackSub.textContent = `المسار ${i+1} من ${playlist.length}`;
+  renderPlaylist();
+}
+
+function setupEqualizer(){
+  if(audioCtxStarted) return;
+  audioCtxStarted = true;
+  try{
+    const ac = new (window.AudioContext||window.webkitAudioContext)();
+    const src = ac.createMediaElementSource(audio);
+    const analyser = ac.createAnalyser();
+    analyser.fftSize = 32;
+    src.connect(analyser); analyser.connect(ac.destination);
+    const data = new Uint8Array(analyser.frequencyBinCount);
+    function draw(){
+      analyser.getByteFrequencyData(data);
+      eqBars.forEach((b,i)=>{ b.style.height = Math.max(4, (data[i*2]||0)/255*34) + 'px'; });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }catch(e){ /* equalizer optional, ignore errors */ }
+}
+
+function playAudio(){ setupEqualizer(); audio.play(); playBtn.textContent = '⏸'; }
+function pauseAudio(){ audio.pause(); playBtn.textContent = '▶'; }
+playBtn.onclick = ()=>{ if(currentIndex === -1) return; audio.paused ? playAudio() : pauseAudio(); };
+document.getElementById('nextBtn').onclick = ()=>{ if(!playlist.length) return; loadTrack((currentIndex+1) % playlist.length); playAudio(); };
+document.getElementById('prevBtn').onclick = ()=>{ if(!playlist.length) return; loadTrack((currentIndex-1+playlist.length) % playlist.length); playAudio(); };
+audio.addEventListener('timeupdate', ()=>{ progressBar.value = (audio.currentTime / audio.duration) * 100 || 0; });
+audio.addEventListener('ended', ()=> document.getElementById('nextBtn').onclick());
+
+/* entry song */
+const entryUrlInput = document.getElementById('entryUrl');
+const savedEntry = localStorage.getItem('xatEntrySong');
+if(savedEntry) entryUrlInput.value = savedEntry;
+document.getElementById('entrySave').onclick = ()=>{
+  const url = entryUrlInput.value.trim();
+  if(!url){ alert('حط رابط الأغنية أولاً'); return; }
+  localStorage.setItem('xatEntrySong', url);
+  alert('تم الحفظ! انشر نفس هذا الملف كاملاً كصفحة الشات ليتم تشغيله تلقائياً لكل زائر.');
+};
+
+/* ================= VIP unlock ================= */
+function checkVip(){
+  const code = document.getElementById('vipCode').value.trim();
+  if(code === "VIP2026"){ // غيّر الكود هنا
+    document.getElementById('vipLocked').style.display='none';
+    document.getElementById('vipContent').style.display='block';
+  } else { alert('كود خاطئ ❌'); }
+}
+
+/* ================= copy link ================= */
+function copyLink(e){
+  navigator.clipboard.writeText(window.location.href);
+  const btn = document.getElementById('copyBtn');
+  const original = '🔗 نسخ رابط الدعوة';
+  btn.textContent = '✅ تم النسخ!';
+  setTimeout(()=>{ btn.textContent = original; }, 2000);
+  if(e) burstConfetti(e);
+}
+
+/* ================= confetti ================= */
+function burstConfetti(e){
+  const colors = ['#38f2e0','#8b5cf6','#ffb84d'];
+  for(let i=0;i<18;i++){
+    const p = document.createElement('div');
+    const angle = Math.random()*360, dist = 40+Math.random()*60;
+    p.style.cssText = `position:fixed;left:${e.clientX}px;top:${e.clientY}px;
+      width:6px;height:6px;border-radius:50%;background:${colors[i%3]};
+      pointer-events:none;z-index:9999;
+      transition:transform .7s cubic-bezier(.2,.8,.2,1), opacity .7s ease;`;
+    document.body.appendChild(p);
+    requestAnimationFrame(()=>{
+      p.style.transform = `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px)`;
+      p.style.opacity = '0';
+    });
+    setTimeout(()=>p.remove(),700);
+  }
+}
+
+/* ================= visitor counter ================= */
+let visits = parseInt(localStorage.getItem('xatVisits') || '128');
+visits += 1;
+localStorage.setItem('xatVisits', visits);
+document.getElementById('visitCount').textContent = visits;
+
+/* ================= custom right-click menu ================= */
+document.addEventListener('contextmenu', e=>{
+  e.preventDefault();
+  const m = document.getElementById('customMenu');
+  m.style.left = e.pageX+'px'; m.style.top = e.pageY+'px';
+  m.style.display = 'block';
+});
+document.addEventListener('click', ()=> document.getElementById('customMenu').style.display='none');
+
+/* ================= entry banner ================= */
+setTimeout(()=>{ document.getElementById('entryBanner').style.transform='translate(-50%,0)'; }, 400);
+setTimeout(()=>{ document.getElementById('entryBanner').style.transform='translate(-50%,-80px)'; }, 4000);
+
+/* ================= welcome popup auto-dismiss ================= */
+setTimeout(()=>{
+  const p=document.getElementById('welcomePop');
+  if(p){ p.style.opacity='0'; setTimeout(()=>p.remove(),500); }
+}, 8000);
+
+/* ================= entry song autoplay for visitors ================= */
+window.addEventListener('DOMContentLoaded', ()=>{
+  const entrySong = localStorage.getItem('xatEntrySong');
+  if(!entrySong) return;
+  const welcomeAudio = new Audio(entrySong);
+  welcomeAudio.play().catch(()=>{
+    const unlock = document.getElementById('unlock');
+    unlock.style.display = 'flex';
+    unlock.onclick = ()=>{ welcomeAudio.play(); unlock.style.display = 'none'; };
+  });
+});
+</script>
+
+</body>
+</html>
